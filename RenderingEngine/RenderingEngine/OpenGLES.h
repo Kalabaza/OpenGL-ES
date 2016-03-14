@@ -3,18 +3,16 @@
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 
-using namespace std;
-
 // esCreateWindow flags
-#define ES_WINDOW_RGB         0     // RGB color buffer
-#define ES_WINDOW_ALPHA       1     // ALPHA color buffer
-#define ES_WINDOW_DEPTH       2     // Depth buffer
-#define ES_WINDOW_STENCIL     4     // Stencil buffer
-#define ES_WINDOW_MULTISAMPLE 8     // Multi-sample buffer
+const int ES_WINDOW_RGB         = 0;  // RGB based color buffer
+const int ES_WINDOW_ALPHA       = 1;  // Allocate an alpha color buffer
+const int ES_WINDOW_DEPTH       = 2;  // Allocate a depth buffer
+const int ES_WINDOW_STENCIL     = 4;  // Allocate a stencil buffer
+const int ES_WINDOW_MULTISAMPLE = 8;  // Allocate a multi-sample buffer
 
 typedef struct
 {
-    // Handle to a program object created with OpenGL
+    // Handle to a program object created with OpenGL ES
     GLuint programObject;
 
 } UserData;
@@ -22,7 +20,7 @@ typedef struct
 typedef struct
 {
     // User data pointer
-    UserData* userData;
+    void* userData;
 
     // Window width
     GLint width;
@@ -45,19 +43,26 @@ typedef struct
     // Callbacks for the Draw, Keyboard and Update methods
     void (*drawFunc)   (void*);
     void (*keyFunc)    (void*, unsigned char, int, int);
-    void (*updateFunc) (void*, float deltaTime);
+    void (*updateFunc) (void*, float);
 } ESContext;
 
 // Initializes the OpenGL ES context variable, must be called before any other functions
-void esInitContext(ESContext *esContext);
+void esInitContext(ESContext*);
 
-// Create the OpenGL Es window
-GLboolean esCreateWindow(ESContext *esContext, const char* title, GLint width, GLint height, GLuint flags);
+// Create the OpenGL Es surface area and the window
+GLuint esCreateWindow(ESContext*, const char*, GLint, GLint, GLuint);
 
-void esRegisterDrawFunc(ESContext *esContext, void (*drawFunc) (ESContext*));
+// Create the display connection, rendering area and context
+EGLBoolean CreateEGLContext(EGLNativeWindowType, EGLDisplay*, EGLContext*, EGLSurface*, EGLint[]);
 
-EGLBoolean CreateEGLContext(EGLNativeWindowType hWnd, EGLDisplay* eglDisplay,
-    EGLContext* eglContext, EGLSurface* eglSurface,
-    EGLint attribList[]);
+// Register the draw function in OpenGL ES
+void esRegisterDrawFunc(ESContext*, void (*drawFunc) (ESContext*));
 
-void esMainLoop(ESContext *esContext);
+// Register the keyboard function in OpenGL ES
+void esRegisterKeyFunc(ESContext*, void(*keyboardFunc) (ESContext*, unsigned char, int, int));
+
+// Main loop of the application
+void esMainLoop(ESContext*);
+
+// Method to load a shader into the OpenGL ES application
+GLuint LoadShader(GLenum type, const char *shaderSrc);

@@ -1,53 +1,9 @@
 #include "Main.h"
 
-GLuint LoadShader(GLenum type, const char *shaderSrc)
+// Method to initialize the OpenGL ES related information
+GLuint Init(ESContext *esContext)
 {
-    GLuint shader;
-    GLint compiled;
-
-    // Create the shader object
-    shader = glCreateShader(type);
-
-    if (shader == 0)
-        return 0;
-
-    // Load the shader source
-    glShaderSource(shader, 1, &shaderSrc, nullptr);
-
-    // Compile the shader
-    glCompileShader(shader);
-
-    // Check the compile status
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-
-    if (!compiled)
-    {
-        GLint infoLen = 0;
-
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
-
-        if (infoLen > 1)
-        {
-            char* infoLog = (char*)malloc(sizeof(char) * infoLen);
-
-            glGetShaderInfoLog(shader, infoLen, nullptr, infoLog);
-            cout << "Error compiling shader:\n%s\n" << infoLog;
-
-            free(infoLog);
-        }
-
-        glDeleteShader(shader);
-        return 0;
-    }
-
-    return shader;
-
-}
-
-// Method to initialize the OpenGL
-int Init(ESContext *esContext)
-{
-    UserData *userData = (UserData*)esContext->userData;
+    // Vertex shader
     GLbyte vShaderStr[] =
         "attribute vec4 vPosition;    \n"
         "void main()                  \n"
@@ -55,6 +11,7 @@ int Init(ESContext *esContext)
         "   gl_Position = vPosition;  \n"
         "}                            \n";
 
+    // Fragment shader
     GLbyte fShaderStr[] =
         "precision mediump float;\n"\
         "void main()                                  \n"
@@ -62,83 +19,111 @@ int Init(ESContext *esContext)
         "  gl_FragColor = vec4 ( 1.0, 0.0, 0.0, 1.0 );\n"
         "}                                            \n";
 
-    GLuint vertexShader;
-    GLuint fragmentShader;
-    GLuint programObject;
-    GLint linked;
+    // Load the vertex and fragment shaders
+    GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, (char*)vShaderStr);
+    GLuint fragmentShader = LoadShader(GL_FRAGMENT_SHADER, (char*)fShaderStr);
 
-    // Load the vertex/fragment shaders
-    vertexShader = LoadShader(GL_VERTEX_SHADER, (char*)vShaderStr);
-    fragmentShader = LoadShader(GL_FRAGMENT_SHADER, (char*)fShaderStr);
+    // Check if the shaders were created correctly
+    if (vertexShader == GL_FALSE || fragmentShader == GL_FALSE)
+    {
+        std::cerr << "There was a problem at the shaders creation." << std::endl;
+        return GL_FALSE;
+    }
 
     // Create the program object
-    programObject = glCreateProgram();
+    GLuint programObject = glCreateProgram();
 
-    if (programObject == 0)
-        return 0;
+    // Check if the program object was created correctly
+    if (programObject == GL_FALSE)
+    {
+        std::cerr << "There was a problem at the program creation." << std::endl;
+        return GL_FALSE;
+    }
 
+    // Attach the shaders to the program object
     glAttachShader(programObject, vertexShader);
     glAttachShader(programObject, fragmentShader);
 
-    // Bind vPosition to attribute 0   
+    // Bind vPosition to attribute 0
     glBindAttribLocation(programObject, 0, "vPosition");
 
-    // Link the program
+    // Link the program object
     glLinkProgram(programObject);
 
-    // Check the link status
+    GLint linked;
+
+    // Check the link status of the program object
     glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
-
-    if (!linked)
+    if (linked == GL_FALSE)
     {
+        // Get information about the error
         GLint infoLen = 0;
-
         glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
-
         if (infoLen > 1)
         {
             char* infoLog = (char*)malloc(sizeof(char) * infoLen);
 
             glGetProgramInfoLog(programObject, infoLen, nullptr, infoLog);
-            cout << "Error linking program:\n%s\n" << infoLog;
+            std::cerr << "Error linking program: " << infoLog << std::endl;
 
             free(infoLog);
         }
 
         glDeleteProgram(programObject);
-        return FALSE;
+        return GL_FALSE;
     }
 
-    // Store the program object
-    userData->programObject = programObject;
+    // Store the program object in the user data of the context
+    static_cast<UserData*>(esContext->userData)->programObject = programObject;
 
+    // Set the clear color as black
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    return TRUE;
+
+    // Load the model of the terrain plan.obj
+
+    return GL_TRUE;
 }
 
+// Method used to draw on screen
 void Draw(ESContext *esContext)
 {
-    UserData *userData = (UserData*)esContext->userData;
+    // Coordinates for the sample triangle
     GLfloat vVertices[] = { 0.0f,  0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f };
+                           -0.5f, -0.5f, 0.0f,
+                            0.5f, -0.5f, 0.0f };
 
-    // Set the viewport
+    // Set the viewport to the size of the window
     glViewport(0, 0, esContext->width, esContext->height);
 
     // Clear the color buffer
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Use the program object
-    glUseProgram(userData->programObject);
+    // Use the program object from the userData in the context
+    glUseProgram(static_cast<UserData*>(esContext->userData)->programObject);
 
-    // Load the vertex data
+    // Load the vertex data into OpenGL ES
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
     glEnableVertexAttribArray(0);
 
+    // Draw the primitives from the array data
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
+    // Swap display buffers
     eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
+}
+
+// Method handle keyboard pressed keys
+void Key(ESContext *esContext, unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+    // Scape key pressed, exit the application
+    case 27:
+        exit(0);
+        break;
+    default:
+        break;
+    }
 }
 
 int main(int argc, char *argv[])
@@ -148,18 +133,26 @@ int main(int argc, char *argv[])
     // User data
     UserData  userData;
 
-    // Initialize the OpenGL ES context
+    // Initialize the OpenGL ES context to zeros
     esInitContext(&esContext);
+
+    // Assign the local userData to the context
     esContext.userData = &userData;
 
-    esCreateWindow(&esContext, "Hello Triangle", 320, 240, ES_WINDOW_RGB);
+    // Create a render surface with the specified characteristics
+    if (esCreateWindow(&esContext, "Rendering Engine", Width, Height, ES_WINDOW_RGB) == GL_FALSE)
+        exit(1);
 
-    if (!Init(&esContext))
-        return 0;
+    // Initialize the needed OpenGL ES characteristics
+    if (Init(&esContext) == GL_FALSE)
+        exit(1);
 
+    // Set the callback for the draw method
     esRegisterDrawFunc(&esContext, Draw);
 
-    esMainLoop(&esContext);
+    // Set the callback for the keyboard method
+    esRegisterKeyFunc(&esContext, Key);
 
-    return 0;
+    // Enter on the application main loop
+    esMainLoop(&esContext);
 }

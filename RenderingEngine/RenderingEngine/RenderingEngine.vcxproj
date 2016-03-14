@@ -167,7 +167,14 @@ copy /Y $(ProjectDir)Dlls\libGLESv2.dll $(SolutionDir)$(Configuration)\libGLESv2
   <ItemGroup>
     <ClInclude Include="Main.h" />
     <ClInclude Include="OpenGLES.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Win32.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RenderingEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
