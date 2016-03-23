@@ -1,18 +1,31 @@
 #pragma once
 
-#include <iostream>
-#include <GLES2/gl2.h>
-#include <EGL/egl.h>
-#include "OpenGLES.h"
+// STD
+#include <memory>
 
-const int Width  = 800;
-const int Height = 600;
+// Engine
+#include "logger.h"
+#include "openGLES.h"
+#include "scenemanager.h"
 
-// Method to initialize the OpenGL ES related information
-GLuint Init(ESContext *esContext);
+namespace RenderingEngine
+{
+    using std::unique_ptr;
+    using std::make_unique;
 
-// Method used to draw on screen
-void Draw(ESContext *esContext);
+    const int Width = 1024;
+    const int Height = 768;
 
-// Method handle keyboard pressed keys
-void Key(ESContext *esContext, unsigned char, int, int);
+    unique_ptr<SceneManager> sceneManager;
+
+    GLuint tertureBuffer;
+
+    // Method to initialize the OpenGL ES related information
+    GLuint Init(ESContext *esContext);
+
+    // Method used to draw on screen
+    void Draw(ESContext *esContext);
+
+    // Method handle keyboard pressed keys
+    void Key(ESContext *esContext, unsigned char, int, int);
+}

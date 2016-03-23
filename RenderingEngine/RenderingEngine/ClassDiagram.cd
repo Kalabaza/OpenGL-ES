@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="RenderingEngine::Mesh" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAEAIAAAAAIAAAAAABAAAAAAAQAAAEAAAAA=</HashCode>
+      <FileName>mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderingEngine::Object" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAgAAAAAAAAAAAQCAAAAAAAAAACAAI=</HashCode>
+      <FileName>object.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderingEngine::Logger" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAACAIAAAAAAAKAAAAAIABAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>logger.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderingEngine::Texture" Collapsed="true">
+    <Position X="3" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAABAAgAUAQAIAAAAAAAAAAAAAAAIQAEAAAAA=</HashCode>
+      <FileName>texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderingEngine::Shader" Collapsed="true">
+    <Position X="6.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QIAAAAABAAAAAAAAAAAAEAAEAAAAERQABAAAAAAAAAA=</HashCode>
+      <FileName>shader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderingEngine::SceneObject" Collapsed="true">
+    <Position X="4.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEABAACCIEAACAAAAAAAAAAAAABIBAA=</HashCode>
+      <FileName>sceneobject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderingEngine::Variable" Collapsed="true">
+    <Position X="4.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEICAAQAAAIAQAAAAABAAAQAAAAQAAAAAEAA=</HashCode>
+      <FileName>variable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderingEngine::SceneManager" Collapsed="true">
+    <Position X="3" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBAAAMABRkAAAEIgAAKAIAACgAABEgQCAAAAAEBEgAQ=</HashCode>
+      <FileName>scenemanager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="RenderingEngine::_Vertex_" Collapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAgAAIAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>object.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="RenderingEngine::__unnamed_struct_01c8_1" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgQAAAAAAAAAAQAQAAAIAAAAUgAAAAAAEEAAAAAAAA=</HashCode>
+      <FileName>openGLES.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="RenderingEngine::Vertex" Collapsed="true">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>object.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="RenderingEngine::ESContext" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>openGLES.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="RenderingEngine::Level" Collapsed="true">
+    <Position X="4.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEACAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>logger.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="RenderingEngine::LogType" Collapsed="true">
+    <Position X="6.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAABAEAAAAA=</HashCode>
+      <FileName>logger.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="RenderingEngine::BufferType" Collapsed="true">
+    <Position X="3" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAABAAAAAAAAAAAAAAAAAEAAAAAgAAAA=</HashCode>
+      <FileName>variable.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

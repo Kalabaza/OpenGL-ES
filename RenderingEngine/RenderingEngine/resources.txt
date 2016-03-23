@@ -1,0 +1,34 @@
+# Attributes format: name, length, buffertype
+# lenght: 2 - vec2, 3 - vec3, 4 - vec4
+# buffertype: 0 - vertices, 1 - textures, 2 - normals
+A Position 3 0
+A TexCoordIn 2 1
+
+# Uniforms format: name
+U Texture
+
+# Projection Uniform
+P Projection
+# Modelview Uniform
+M Modelview
+
+# Shaders format: vertex, fragment
+S vertexshader.glsl fragmentshader.glsl
+
+# Object Coordinates format: (vec3)position and (vec3)scale
+# Cube
+# C 0.0 0.0 0.0 1.0 1.0 1.0 45.0 1.0 0.0 0.0
+# betty
+C 0.0 -1.0 0.0 1.0 1.0 1.0    0.0 1.0 0.0 0.0
+#plane
+#C 0.0 -0.1 0.0 1.0 1.0 1.0    0.0 1.0 0.0 0.0
+
+# Objects format: filename, shader index
+# O cube.obj 0
+O betty.obj 0
+# O plane.obj 0
+
+# Textures format: filename, shader index
+# T uvtemplate.bmp 0
+T betty.tga 0
+#T terrain.tga 0

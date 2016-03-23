@@ -89,17 +89,26 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(OPENGLES_INCDIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OPENGLES_LIBDIR);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libEGL.lib;libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(ProjectDir)Dlls\libEGL.dll $(SolutionDir)$(Configuration)\libEGL.dll
-copy /Y $(ProjectDir)Dlls\libGLESv2.dll $(SolutionDir)$(Configuration)\libGLESv2.dll</Command>
+      <Command>rem copy the DLLs from the OpenGL ES emulator
+xcopy /Y /D $(ProjectDir)dll\*.dll $(SolutionDir)$(Configuration)\ | find /V "File(s) copied"
+rem copy the resources file that contains information about what is going to be loaded on the engine
+xcopy /Y /D $(ProjectDir)resources.txt $(SolutionDir)$(Configuration)\ | find /v "File(s) copied" 
+rem copy the shaders for the vertex and fragment shader
+xcopy /Y /D $(ProjectDir)shader\*.glsl $(SolutionDir)$(Configuration)\ | find /v "File(s) copied" 
+rem copy the objetcs
+xcopy /Y /D $(ProjectDir)obj\*.obj $(SolutionDir)$(Configuration)\ | find /v "File(s) copied" 
+rem copy the textures
+xcopy /Y /D $(ProjectDir)texture\* $(SolutionDir)$(Configuration)\ | find /v "File(s) copied" 
+If errorlevel 1 @exit 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -126,19 +135,28 @@ copy /Y $(ProjectDir)Dlls\libGLESv2.dll $(SolutionDir)$(Configuration)\libGLESv2
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(OPENGLES_INCDIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OPENGLES_LIBDIR);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libEGL.lib;libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(ProjectDir)Dlls\libEGL.dll $(SolutionDir)$(Configuration)\libEGL.dll
-copy /Y $(ProjectDir)Dlls\libGLESv2.dll $(SolutionDir)$(Configuration)\libGLESv2.dll</Command>
+      <Command>rem copy the DLLs from the OpenGL ES emulator
+xcopy /Y /D $(ProjectDir)dll\*.dll $(SolutionDir)$(Configuration)\ | find /V "File(s) copied"
+rem copy the resources file that contains information about what is going to be loaded on the engine
+xcopy /Y /D $(ProjectDir)resources.txt $(SolutionDir)$(Configuration)\ | find /v "File(s) copied" 
+rem copy the shaders for the vertex and fragment shader
+xcopy /Y /D $(ProjectDir)shader\*.glsl $(SolutionDir)$(Configuration)\ | find /v "File(s) copied" 
+rem copy the objetcs
+xcopy /Y /D $(ProjectDir)obj\*.obj $(SolutionDir)$(Configuration)\ | find /v "File(s) copied" 
+rem copy the textures
+xcopy /Y /D $(ProjectDir)texture\* $(SolutionDir)$(Configuration)\ | find /v "File(s) copied" 
+If errorlevel 1 @exit 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -160,21 +178,44 @@ copy /Y $(ProjectDir)Dlls\libGLESv2.dll $(SolutionDir)$(Configuration)\libGLESv2
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="OpenGLES.cpp" />
-    <ClCompile Include="Win32.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="object.cpp" />
+    <ClCompile Include="openGLES.cpp" />
+    <ClCompile Include="scenemanager.cpp" />
+    <ClCompile Include="sceneobject.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="texture.cpp" />
+    <ClCompile Include="win32.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="OpenGLES.h" />
+    <ClInclude Include="sceneobject.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="variable.h" />
+    <ClInclude Include="logger.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="openGLES.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Win32.h" />
+    <ClInclude Include="scenemanager.h" />
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="texture.h" />
+    <ClInclude Include="win32.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RenderingEngine.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="shader\fragmentshader.glsl" />
+    <None Include="shader\vertexshader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="resources.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

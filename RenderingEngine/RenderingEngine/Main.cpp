@@ -1,146 +1,122 @@
-#include "Main.h"
+#include "main.h"
 
-// Method to initialize the OpenGL ES related information
-GLuint Init(ESContext *esContext)
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+
+namespace RenderingEngine
 {
-    // Vertex shader
-    GLbyte vShaderStr[] =
-        "attribute vec4 vPosition;    \n"
-        "void main()                  \n"
-        "{                            \n"
-        "   gl_Position = vPosition;  \n"
-        "}                            \n";
-
-    // Fragment shader
-    GLbyte fShaderStr[] =
-        "precision mediump float;\n"\
-        "void main()                                  \n"
-        "{                                            \n"
-        "  gl_FragColor = vec4 ( 1.0, 0.0, 0.0, 1.0 );\n"
-        "}                                            \n";
-
-    // Load the vertex and fragment shaders
-    GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, (char*)vShaderStr);
-    GLuint fragmentShader = LoadShader(GL_FRAGMENT_SHADER, (char*)fShaderStr);
-
-    // Check if the shaders were created correctly
-    if (vertexShader == GL_FALSE || fragmentShader == GL_FALSE)
+    // Method to initialize the OpenGL related information
+    GLuint Init(ESContext *esContext)
     {
-        std::cerr << "There was a problem at the shaders creation." << std::endl;
-        return GL_FALSE;
+        Log << Function << endl;
+
+        // Dark blue background
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+        // Enable the depth test
+        glEnable(GL_DEPTH_TEST);
+
+        // Load the objects using the scene manager
+        sceneManager = make_unique<SceneManager>(esContext);
+
+        Log << Info << "Finished initialization of OpenGL elements." << endl;
+        return GL_TRUE;
     }
 
-    // Create the program object
-    GLuint programObject = glCreateProgram();
-
-    // Check if the program object was created correctly
-    if (programObject == GL_FALSE)
+    // Method used to draw on screen
+    void Draw(ESContext *esContext)
     {
-        std::cerr << "There was a problem at the program creation." << std::endl;
-        return GL_FALSE;
+        // Set the viewport to the size of the window
+        glViewport(0, 0, esContext->width, esContext->height);
+
+        // Clear the color buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Draw the objects and textures on screen
+        sceneManager->draw();
+        
+        // Swap display buffers
+        eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
     }
 
-    // Attach the shaders to the program object
-    glAttachShader(programObject, vertexShader);
-    glAttachShader(programObject, fragmentShader);
-
-    // Bind vPosition to attribute 0
-    glBindAttribLocation(programObject, 0, "vPosition");
-
-    // Link the program object
-    glLinkProgram(programObject);
-
-    GLint linked;
-
-    // Check the link status of the program object
-    glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
-    if (linked == GL_FALSE)
+    // Method handle keyboard pressed keys
+    void Key(ESContext *esContext, unsigned char key, int x, int y)
     {
-        // Get information about the error
-        GLint infoLen = 0;
-        glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
-        if (infoLen > 1)
+        vec3 camera = sceneManager->getCamera();
+        switch (key)
         {
-            char* infoLog = (char*)malloc(sizeof(char) * infoLen);
-
-            glGetProgramInfoLog(programObject, infoLen, nullptr, infoLog);
-            std::cerr << "Error linking program: " << infoLog << std::endl;
-
-            free(infoLog);
+            // Scape key pressed, exit the application
+        case 27:
+            Log << Debug << "Escape key pressed, finishing application." << endl;
+            glDeleteProgram(esContext->programID);
+            exit(0);
+            break;
+        case 'a':
+            camera.x -= 0.5;
+            break;
+        case 's':
+            camera.x += 0.5;
+            break;
+        case 'w':
+            camera.y += 0.5;
+            break;
+        case 'z':
+            camera.y -= 0.5;
+            break;
+        case 'e':
+            camera.z += 0.5;
+            break;
+        case 'd':
+            camera.z -= 0.5;
+            break;
+        case 'r':
+            {
+                float angle = sceneManager->getAngle();
+                angle += 0.5f;
+                if (angle >= 360.0f)
+                    angle -= 360.0f;
+                sceneManager->setAngle(angle);
+                return;
+            }
+        case 'f':
+            {
+                float angle = sceneManager->getAngle();
+                angle -= 0.5f;
+                if (angle <= 0.0f)
+                    angle += 360.0f;
+                sceneManager->setAngle(angle);
+                return;
+            }
+        default:
+            break;
         }
-
-        glDeleteProgram(programObject);
-        return GL_FALSE;
+        sceneManager->setCamera(camera);
     }
 
-    // Store the program object in the user data of the context
-    static_cast<UserData*>(esContext->userData)->programObject = programObject;
-
-    // Set the clear color as black
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-    // Load the model of the terrain plan.obj
-
-    return GL_TRUE;
-}
-
-// Method used to draw on screen
-void Draw(ESContext *esContext)
-{
-    // Coordinates for the sample triangle
-    GLfloat vVertices[] = { 0.0f,  0.5f, 0.0f,
-                           -0.5f, -0.5f, 0.0f,
-                            0.5f, -0.5f, 0.0f };
-
-    // Set the viewport to the size of the window
-    glViewport(0, 0, esContext->width, esContext->height);
-
-    // Clear the color buffer
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Use the program object from the userData in the context
-    glUseProgram(static_cast<UserData*>(esContext->userData)->programObject);
-
-    // Load the vertex data into OpenGL ES
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
-    glEnableVertexAttribArray(0);
-
-    // Draw the primitives from the array data
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    // Swap display buffers
-    eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
-}
-
-// Method handle keyboard pressed keys
-void Key(ESContext *esContext, unsigned char key, int x, int y)
-{
-    switch (key)
+    void Update(ESContext *esContext, float deltaTime)
     {
-    // Scape key pressed, exit the application
-    case 27:
-        exit(0);
-        break;
-    default:
-        break;
+        sceneManager->update(esContext);
     }
 }
 
 int main(int argc, char *argv[])
 {
+    using namespace RenderingEngine;
+
+    // Change the logging level to show all the messages
+    Log << All << Function << endl;
+
     // OpenGL ES context data
     ESContext esContext;
-    // User data
-    UserData  userData;
 
     // Initialize the OpenGL ES context to zeros
+    Log << Debug << "Initializing the OpenGL ES context." << endl;
     esInitContext(&esContext);
 
-    // Assign the local userData to the context
-    esContext.userData = &userData;
-
     // Create a render surface with the specified characteristics
-    if (esCreateWindow(&esContext, "Rendering Engine", Width, Height, ES_WINDOW_RGB) == GL_FALSE)
+    Log << Debug << "Creating a window for rendering purposes." << endl;
+    // Allocate RGB color buffer and depth buffer
+    if (esCreateWindow(&esContext, "Rendering Engine", Width, Height, ES_WINDOW_RGB | ES_WINDOW_DEPTH) == GL_FALSE)
         exit(1);
 
     // Initialize the needed OpenGL ES characteristics
@@ -153,6 +129,11 @@ int main(int argc, char *argv[])
     // Set the callback for the keyboard method
     esRegisterKeyFunc(&esContext, Key);
 
+    // Set the callback for the update method
+    esRegisterUpdateFunc(&esContext, Update);
+
     // Enter on the application main loop
     esMainLoop(&esContext);
+
+    return 0;
 }
