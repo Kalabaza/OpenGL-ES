@@ -16,23 +16,36 @@ namespace RenderingEngine
 {
     using std::vector;
     using std::string;
-    using std::unique_ptr;
+    using std::shared_ptr;
+
+    enum TextureType
+    {
+        SingleTexture,
+        CubeMap
+    };
+
+    const unsigned int NumCubeFaces = 6;
 
     class Texture
     {
     private:
         GLint width, height, numComponents;
-        vector<unsigned char> pixels;
+        vector<vector<unsigned char>> pixels;
 
         unsigned char * data;
 
         GLuint textureObject;
 
-        unique_ptr<Shader> &shader;
+        shared_ptr<Shader> &shader;
+
+        void GenTextureObject(TextureType);
     public:
-        Texture(const string&, unique_ptr<Shader>&);
+        // Disable the default constructor
+        Texture() = delete;
+        Texture(const string&, shared_ptr<Shader>&);
+        Texture(const vector<string>&, shared_ptr<Shader>&);
         ~Texture();
 
-        void draw();
+        void Draw(TextureType);
     };
 }

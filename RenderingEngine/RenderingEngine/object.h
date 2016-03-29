@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 // GLM
 #include <glm/glm.hpp>
@@ -21,10 +22,10 @@ namespace RenderingEngine
     using std::ifstream;
     using std::ios;
     using std::stringstream;
-    using glm::vec4;
     using glm::vec3;
     using glm::vec2;
 
+    // 
     typedef struct _Vertex_ {
         vec3 Position;  // Three coordinates for position X,Y,Z
         vec2 TexCoord;  // Texture has two coordinates U,V
@@ -39,14 +40,16 @@ namespace RenderingEngine
         vector<GLushort> indexes;
 
     public:
-        Object() = delete;
+        // Constructor for a skymap
+        Object();
+        // Constructor for a normal object
         Object(const string&);
 
         // Get the number of vertices on the object
         int getSize() { return vertices.size(); }
 
-        // Get access to the data of the object file
-        vector<Vertex> &verticesData() { return vertices; }
-        vector<GLushort> &indexData()  { return indexes; }
+        // Get access to the vertices and indexes vectors holding the data of the object file
+        Vertex *verticesData() { return vertices.data(); }
+        GLushort *indexData()  { return indexes.data(); }
     };
 }

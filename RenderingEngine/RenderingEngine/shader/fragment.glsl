@@ -6,6 +6,6 @@ varying lowp vec2 TexCoordOut;
 uniform sampler2D Texture;
 
 void main(void) {
-    // Set the fragment color to the texture by using the interpolated value
+    // Set the fragment color to the texture by using the interpolated values
     gl_FragColor = texture2D(Texture, TexCoordOut);
 }

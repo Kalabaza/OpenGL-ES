@@ -18,6 +18,8 @@ namespace RenderingEngine
         NotSet
     };
 
+
+    // Class used to send the attributes and uniforms between the objects
     class Variable
     {
     private:
@@ -26,12 +28,10 @@ namespace RenderingEngine
         GLuint size;
         BufferType bufferType;
     public:
-        Variable() = default;
         Variable(const string &variableName) : variableName{ variableName }, size{ 0 }, bufferType{ NotSet } {}
         Variable(const string &variableName, const GLint &variableIndex) : variableName{ variableName }, variableIndex{ variableIndex }, size{ 0 }, bufferType{ NotSet } {}
         Variable(const string &variableName, GLuint size, BufferType bufferType) : variableName{ variableName }, size{ size }, bufferType{ bufferType } {}
         Variable(const string &variableName, const GLint variableIndex, GLuint size, BufferType bufferType) : variableName{ variableName }, variableIndex { variableIndex }, size{ size }, bufferType{ bufferType } {}
-        ~Variable() = default;
 
         string getVariableName() { return variableName; }
         GLint getVariableIndex() { return variableIndex; }

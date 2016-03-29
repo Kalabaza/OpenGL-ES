@@ -23,8 +23,11 @@ namespace RenderingEngine
     5 = Purple      D = Light Purple
     6 = Yellow      E = Light Yellow
     7 = White       F = Bright White */
+
+    // Set the text color to use on console
     inline void setTextColor(WORD color) { SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color); }
 
+    // Level of the logging being done in the application
     enum Level
     {
         Disabled = 0,
@@ -32,6 +35,7 @@ namespace RenderingEngine
         All             // Info, Debug and Error messages
     };
 
+    // Type of the log message
     enum LogType
     {
         Info = 0,       // Normal messages of the application
@@ -62,8 +66,8 @@ namespace RenderingEngine
         bool showLog()
         {                                               // Levels
             if (logLevel != Disabled &&                 // Disabled, do not display any logging messages
-                (logLevel == All ||                      // All, display all the messages
-                    (logLevel == Min && logType != Debug)))  // Min, do not display debug messages
+               (logLevel == All ||                      // All, display all the messages
+               (logLevel == Min && logType != Debug)))  // Min, do not display debug messages
                 return true;
             return false;
         }
@@ -76,7 +80,7 @@ namespace RenderingEngine
             logLevel = level;
             return *this;
         }
-        // Overload to set the type of the logging.
+        // Overload to set the type of the logging and the color of the text
         Logger &operator<<(const LogType &type)
         {
             logType = type;
@@ -90,7 +94,7 @@ namespace RenderingEngine
             _out_stream << prefix[logType];
             return *this;
         }
-        // Overload needed to use endl
+        // Overload needed to use endl to add a new line
         Logger &operator<<(ostream& (*)(ostream&))
         {
             if (showLog())

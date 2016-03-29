@@ -13,6 +13,7 @@ namespace RenderingEngine
     using std::unique_ptr;
     using std::make_unique;
 
+    // Size of the rendering window
     const int Width = 1024;
     const int Height = 768;
 

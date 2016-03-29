@@ -69,9 +69,6 @@
     <ClCompile Include="shader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="sceneobject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="scenemanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -131,17 +128,21 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\fragmentshader.glsl">
+    <None Include="shader\fragment_skybox.glsl">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="shader\vertexshader.glsl">
+    <None Include="shader\vertex_skybox.glsl">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shader\fragment.glsl">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shader\vertex.glsl">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="resources.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
+    <Text Include="resources.txt" />
   </ItemGroup>
 </Project>

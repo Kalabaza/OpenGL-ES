@@ -16,6 +16,9 @@ namespace RenderingEngine
         // Enable the depth test
         glEnable(GL_DEPTH_TEST);
 
+        glCullFace(GL_FRONT);
+        glDepthFunc(GL_LEQUAL);
+
         // Load the objects using the scene manager
         sceneManager = make_unique<SceneManager>(esContext);
 
@@ -33,7 +36,7 @@ namespace RenderingEngine
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Draw the objects and textures on screen
-        sceneManager->draw();
+        sceneManager->Draw();
         
         // Swap display buffers
         eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
@@ -42,6 +45,7 @@ namespace RenderingEngine
     // Method handle keyboard pressed keys
     void Key(ESContext *esContext, unsigned char key, int x, int y)
     {
+        // Current implementation of the camera, needs to be improved
         vec3 camera = sceneManager->getCamera();
         switch (key)
         {
@@ -95,7 +99,8 @@ namespace RenderingEngine
 
     void Update(ESContext *esContext, float deltaTime)
     {
-        sceneManager->update(esContext);
+        // Update the objects on screen based on changes on the rendering area or any user interaction
+        sceneManager->Update(esContext);
     }
 }
 

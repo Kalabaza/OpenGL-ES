@@ -11,6 +11,7 @@
 // GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // OpenGL
 #include <GLES2/gl2.h>
@@ -29,6 +30,7 @@ namespace RenderingEngine
     using std::vector;
     using std::unique_ptr;
     using std::make_unique;
+    using std::make_shared;
     using std::string;
     using std::ifstream;
     using std::ios;
@@ -38,36 +40,13 @@ namespace RenderingEngine
     using std::get;
     using glm::vec3;
     using glm::mat4;
+    using glm::value_ptr;
 
     class SceneManager
     {
     private:
-        // Shaders will be held in here
-        vector<unique_ptr<Shader>> shaders;
-        // Object files go in here
-        vector<unique_ptr<Mesh>> meshes;
-        // Textures are saved in here
-        vector<unique_ptr<Texture>> textures;
-        // Properties of the scene objects
+        // Vector with the objects that will be rendered
         vector<unique_ptr<SceneObject>> sceneobjects;
-
-        GLuint projectionUniform;
-        GLuint modelviewUniform;
-
-        // Temporary vectors to hold the parameters of the resources.txt file
-        vector<tuple<string, string>> shader;
-        vector<tuple<string, unsigned int>> mesh;
-        vector<tuple<string, unsigned int>> texture;
-        vector<vec3> position;
-        vector<vec3> scale;
-        vector<vec3> rotation;
-
-        string projectionName;
-        string modelviewName;
-
-        mat4 projection;
-        vec3 camera;
-        float angle;
 
         // Attributes used on the shaders
         vector<unique_ptr<Variable>> attributes;
@@ -75,16 +54,26 @@ namespace RenderingEngine
         // Uniforms used on the shaders
         vector<unique_ptr<Variable>> uniforms;
 
+        // Projection matrix
+        mat4 projectionMatrix;
+
+        vec3 camera;
+        float angle;
+
     public:
         SceneManager(ESContext*);
         ~SceneManager();
 
-        void draw();
-        void update(ESContext*);
+        // Draw objects on screen
+        void Draw();
+        // Update the state of the objects
+        void Update(ESContext*);
 
+        // Handling camera
         vec3 getCamera() { return camera; }
         void setCamera(const vec3 &camera) { this->camera = camera; }
 
+        // Modify the rotation angle of the objects
         float getAngle() { return angle; }
         void setAngle(const float &angle) { this->angle = angle; }
     };

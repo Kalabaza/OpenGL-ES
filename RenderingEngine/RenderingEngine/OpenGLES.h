@@ -10,11 +10,11 @@
 namespace RenderingEngine
 {
     // esCreateWindow flags
-    const int ES_WINDOW_RGB = 0;  // RGB based color buffer
-    const int ES_WINDOW_ALPHA = 1;  // Allocate an alpha color buffer
-    const int ES_WINDOW_DEPTH = 2;  // Allocate a depth buffer
-    const int ES_WINDOW_STENCIL = 4;  // Allocate a stencil buffer
-    const int ES_WINDOW_MULTISAMPLE = 8;  // Allocate a multi-sample buffer
+    const int ES_WINDOW_RGB = 0;            // RGB based color buffer
+    const int ES_WINDOW_ALPHA = 1;          // Allocate an alpha color buffer
+    const int ES_WINDOW_DEPTH = 2;          // Allocate a depth buffer
+    const int ES_WINDOW_STENCIL = 4;        // Allocate a stencil buffer
+    const int ES_WINDOW_MULTISAMPLE = 8;    // Allocate a multi-sample buffer
 
     typedef struct
     {

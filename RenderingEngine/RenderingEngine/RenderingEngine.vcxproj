@@ -183,7 +183,6 @@ If errorlevel 1 @exit 0</Command>
     <ClCompile Include="object.cpp" />
     <ClCompile Include="openGLES.cpp" />
     <ClCompile Include="scenemanager.cpp" />
-    <ClCompile Include="sceneobject.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="win32.cpp" />
@@ -211,8 +210,10 @@ If errorlevel 1 @exit 0</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
-    <None Include="shader\fragmentshader.glsl" />
-    <None Include="shader\vertexshader.glsl" />
+    <None Include="shader\fragment.glsl" />
+    <None Include="shader\fragment_skybox.glsl" />
+    <None Include="shader\vertex.glsl" />
+    <None Include="shader\vertex_skybox.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="resources.txt" />

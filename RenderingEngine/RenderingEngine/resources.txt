@@ -1,34 +1,62 @@
-# Attributes format: name, length, buffertype
-# lenght: 2 - vec2, 3 - vec3, 4 - vec4
-# buffertype: 0 - vertices, 1 - textures, 2 - normals
+# 
+# Resources used on the rendering engine
+# 
+# Atributes have 3 properties: Name, Length, Buffertype
+# Name:		String to get the attribute from the shader
+# Length:	Can be 2, 3 or 4 (vec2, vec3 and vec4)
+# Buffertype:	Where the data is comming from?
+#		0 - Vertices
+#		1 - Textures
+#		2 - Normals
+# 
+# Uniforms have 1 property: Name
+# Name:		String to get the uniform from the shader
+# 
+# Projection matrix is handle in a special way on each object as well as the 
+# Modelview matrix, the uniforms use a different format.
+# 
+# The coordinates of an object are sent using three vertices and a angle
+# (group of also three float values): Position, Scale, Rotation and Angle
+# 
+# Each object has its own vertex and fragment shader and also the texture
+# that is used during rendering.
+# 
+# The texture needs to provide the file name and in the case of the skymap
+# all the faces need to be provided.
+# 
+# The object definition starts with a point and ends with a dash (. -)
+# 
+
+. Shara Start
 A Position 3 0
 A TexCoordIn 2 1
-
-# Uniforms format: name
 U Texture
-
-# Projection Uniform
 P Projection
-# Modelview Uniform
 M Modelview
+S vertex.glsl fragment.glsl
+C 0.0 0.0 0.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0
+O shara.obj
+T shara.tga
+- Shara End
 
-# Shaders format: vertex, fragment
-S vertexshader.glsl fragmentshader.glsl
+. Betty Start
+A Position 3 0
+A TexCoordIn 2 1
+U Texture
+P Projection
+M Modelview
+S vertex.glsl fragment.glsl
+C -5.0 0.0 0.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0
+O betty.obj
+T betty.tga
+- Betty End
 
-# Object Coordinates format: (vec3)position and (vec3)scale
-# Cube
-# C 0.0 0.0 0.0 1.0 1.0 1.0 45.0 1.0 0.0 0.0
-# betty
-C 0.0 -1.0 0.0 1.0 1.0 1.0    0.0 1.0 0.0 0.0
-#plane
-#C 0.0 -0.1 0.0 1.0 1.0 1.0    0.0 1.0 0.0 0.0
-
-# Objects format: filename, shader index
-# O cube.obj 0
-O betty.obj 0
-# O plane.obj 0
-
-# Textures format: filename, shader index
-# T uvtemplate.bmp 0
-T betty.tga 0
-#T terrain.tga 0
+. Skybox Start
+A Position 3 0
+U Texture
+P Projection
+M Modelview
+S vertex_skybox.glsl fragment_skybox.glsl
+C 0.0 0.0 0.0 100.0 100.0 100.0 0.0 0.0 0.0 0.0
+B right.jpg left.jpg top.jpg bottom.jpg back.jpg front.jpg
+- Skybox End

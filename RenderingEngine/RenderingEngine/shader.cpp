@@ -12,7 +12,7 @@ namespace RenderingEngine
         Log << Debug << "Loading vertex and fragment shaders." << endl;
         // Load the vertex and fragment shaders
         vertexShader = LoadShader(GL_VERTEX_SHADER, vertexShaderFileName);
-        // Check if the shaders was created correctly
+        // Check if the vertex shader was created correctly
         if (vertexShader == GL_FALSE)
         {
             Log << Error << "There was a problem with the vertex shader creation." << endl;
@@ -21,7 +21,7 @@ namespace RenderingEngine
         Log << Debug << "Vertex shader loaded correctly." << endl;
 
         fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fragmentShaderFileName);
-        // Check if the shaders were created correctly
+        // Check if the fragment shader was created correctly
         if (fragmentShader == GL_FALSE)
         {
             Log << Error << "There was a problem with the fragment shader creation." << endl;
@@ -71,10 +71,7 @@ namespace RenderingEngine
             exit(1);
         }
 
-        // Use the create program object
-        glUseProgram(programObject);
-
-        // Get the location of the attributes
+        // Get the location of the attributes and enable the attribute arrays
         if (attributesNames.size() != 0)
         {
             for (auto &attribute : attributesNames)
@@ -88,15 +85,14 @@ namespace RenderingEngine
         if (uniformsNames.size() != 0)
         {
             for (auto &uniform : uniformsNames)
-            {
                 uniforms.push_back(make_unique<Variable>(uniform->getVariableName(), glGetUniformLocation(programObject, uniform->getVariableName().c_str())));
-            }
         }
     }
 
     Shader::~Shader()
     {
         Log << Function << endl;
+        // Delete the program object created previously
         glDeleteProgram(programObject);
     }
 
@@ -105,8 +101,8 @@ namespace RenderingEngine
     {
         Log << Function << endl;
         string shaderCode, line = "";
-        ifstream shaderStream(shaderFileName, ios::in);
         // Read the shader file from disk
+        ifstream shaderStream(shaderFileName, ios::in);
         if (shaderStream.is_open())
         {
             // Read all the content of the shader file
