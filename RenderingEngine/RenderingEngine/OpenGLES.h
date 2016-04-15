@@ -7,6 +7,10 @@
 // Engine
 #include "logger.h"
 
+#if defined(__linux__)
+#include "linux.h"
+#endif
+
 namespace RenderingEngine
 {
     // esCreateWindow flags
@@ -39,6 +43,10 @@ namespace RenderingEngine
         // EGL surface
         EGLSurface eglSurface;
 
+#if defined(__linux__)
+        Display *display;
+#endif
+
         // Callbacks for the Draw, Keyboard and Update methods
         void(*drawFunc)   (void*);
         void(*keyFunc)    (void*, unsigned char, int, int);
@@ -48,11 +56,14 @@ namespace RenderingEngine
     // Initializes the OpenGL ES context variable, must be called before any other functions
     void esInitContext(ESContext*);
 
-    // Create the OpenGL Es surface area and the window
+    // Create the OpenGL ES surface area and the window
     GLuint esCreateWindow(ESContext*, const char*, GLint, GLint, GLuint);
 
+    // Destroy the OpenGL ES surface area and the window
+    GLuint esDestroyWindow(ESContext*);
+
     // Create the display connection, rendering area and context
-    EGLBoolean CreateEGLContext(EGLNativeWindowType, EGLDisplay*, EGLContext*, EGLSurface*, EGLint[]);
+    EGLBoolean CreateEGLContext(ESContext*, EGLint[]);
 
     // Register the draw function in OpenGL ES
     void esRegisterDrawFunc(ESContext*, void(*drawFunc)(ESContext*));

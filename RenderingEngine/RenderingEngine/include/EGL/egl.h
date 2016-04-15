@@ -1,8 +1,31 @@
 /* -*- mode: c; tab-width: 8; -*- */
 /* vi: set sw=4 ts=8: */
 /* Reference version of egl.h for EGL 1.4.
- * Last modified 2008/05/02
+ * $Revision: 7244 $ on $Date: 2009-01-20 17:06:59 -0800 (Tue, 20 Jan 2009) $
  */
+
+/*
+** Copyright (c) 2007-2009 The Khronos Group Inc.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and/or associated documentation files (the
+** "Materials"), to deal in the Materials without restriction, including
+** without limitation the rights to use, copy, modify, merge, publish,
+** distribute, sublicense, and/or sell copies of the Materials, and to
+** permit persons to whom the Materials are furnished to do so, subject to
+** the following conditions:
+**
+** The above copyright notice and this permission notice shall be included
+** in all copies or substantial portions of the Materials.
+**
+** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+*/
 
 #ifndef __egl_h_
 #define __egl_h_
@@ -17,7 +40,7 @@ extern "C" {
 #endif
 
 /* EGL Types */
-typedef int32_t EGLint;
+/* EGLint is defined in eglplatform.h */
 typedef unsigned int EGLBoolean;
 typedef unsigned int EGLenum;
 typedef void *EGLConfig;
@@ -42,7 +65,7 @@ typedef void *EGLClientBuffer;
 #define EGL_TRUE			1
 
 /* Out-of-band handle values */
-#define EGL_DEFAULT_DISPLAY		((void *)0)
+#define EGL_DEFAULT_DISPLAY		((EGLNativeDisplayType)0)
 #define EGL_NO_CONTEXT			((EGLContext)0)
 #define EGL_NO_DISPLAY			((EGLDisplay)0)
 #define EGL_NO_SURFACE			((EGLSurface)0)
@@ -291,7 +314,14 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
 EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers(EGLDisplay dpy, EGLSurface surface,
 			  EGLNativePixmapType target);
 
-EGLAPI void (* EGLAPIENTRY eglGetProcAddress(const char *procname))(void);
+/* This is a generic function pointer type, whose name indicates it must
+ * be cast to the proper type *and calling convention* before use.
+ */
+typedef void (*__eglMustCastToProperFunctionPointerType)(void);
+
+/* Now, define eglGetProcAddress using the generic function ptr. type */
+EGLAPI __eglMustCastToProperFunctionPointerType EGLAPIENTRY
+       eglGetProcAddress(const char *procname);
 
 #ifdef __cplusplus
 }

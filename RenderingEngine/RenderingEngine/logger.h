@@ -3,9 +3,25 @@
 // STD
 #include <iostream>
 #include <string>
+#if defined(__linux__)
+#include <memory>
+#endif
 
+#if defined(_WIN32)
 // Windows
 #include <windows.h>
+#endif
+
+#if defined(__linux__)
+// Implementation of the unique_ptr for linux
+namespace std
+{
+    template<typename T, typename... Args>
+    std::unique_ptr<T> make_unique(Args&&... args) {
+        return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+    }
+}
+#endif
 
 namespace RenderingEngine
 {
@@ -14,6 +30,7 @@ namespace RenderingEngine
     using std::cout;
     using std::endl;
 
+#if defined(_WIN32)
     /* Console colors, 0xAB A -> Background color, B -> Foreground color
     0 = Black       8 = Gray
     1 = Blue        9 = Light Blue
@@ -26,6 +43,7 @@ namespace RenderingEngine
 
     // Set the text color to use on console
     inline void setTextColor(WORD color) { SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color); }
+#endif
 
     // Level of the logging being done in the application
     enum Level
@@ -58,7 +76,7 @@ namespace RenderingEngine
         ostream &_out_stream;
         // Private constructor used for the singleton pattern, 
         // sets the default output to the screen and the logType to Info
-        Logger() : logType{ Info }, _out_stream{ cout } {};
+        Logger() : logType{ Info }, _out_stream( cout ) {};
         // Delete the copy constructor and the assign operator of the logger class
         Logger(Logger const&) = delete;
         Logger &operator=(Logger const&) = delete;
@@ -84,6 +102,7 @@ namespace RenderingEngine
         Logger &operator<<(const LogType &type)
         {
             logType = type;
+#if defined(_WIN32)
             switch (logType)
             {
             case Info:  setTextColor(0x02); break;
@@ -91,6 +110,7 @@ namespace RenderingEngine
             case Func:  setTextColor(0x03); break;
             case Error: setTextColor(0x04); break;
             }
+#endif
             _out_stream << prefix[logType];
             return *this;
         }
@@ -99,7 +119,9 @@ namespace RenderingEngine
         {
             if (showLog())
                 _out_stream << endl;
+#if defined(_WIN32)
             setTextColor(0x07);
+#endif
             return *this;
         }
         // Overload with templates to allow content of any type

@@ -36,8 +36,8 @@ namespace RenderingEngine
         // Adjust the window size and style
         AdjustWindowRect(&windowRect, wStyle, FALSE);
 
-        esContext->hWnd = CreateWindow("opengles2.0", title, wStyle, 0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
-            nullptr, nullptr, hInstance, nullptr);
+        esContext->hWnd = CreateWindow("opengles2.0", title, wStyle, 0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, 
+                                       nullptr, nullptr, hInstance, nullptr);
 
         if (esContext->hWnd == nullptr)
         {
@@ -51,6 +51,18 @@ namespace RenderingEngine
         // Show the window on screen
         ShowWindow(esContext->hWnd, TRUE);
 
+        return TRUE;
+    }
+
+    // Destroying a window in Win32
+    int WinDestroy(ESContext *esContext)
+    {
+        // Check if the window is still valid and if so destroy it
+        if (IsWindow(esContext->hWnd) != FALSE && DestroyWindow(esContext->hWnd) == FALSE)
+        {
+            Log << Error << "Unable to destroy the Win32 window." << endl;
+            return FALSE;
+        }
         return TRUE;
     }
 

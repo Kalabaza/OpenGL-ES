@@ -6,7 +6,7 @@
 
 namespace RenderingEngine
 {
-    Texture::Texture(const string &textureFileName, shared_ptr<Shader> &shader) : width{ 0 }, height{ 0 }, data{ nullptr }, shader{ shader }
+    Texture::Texture(const string &textureFileName, shared_ptr<Shader> &shader) : width{ 0 }, height{ 0 }, data{ nullptr }, shader( shader )
     {
         Log << Function << endl;
 
@@ -31,13 +31,10 @@ namespace RenderingEngine
         // Send the pixel data to OpenGL
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels[0].data());
 
-        // Remove the local copy of the pixels since they are already on OpenGL
-        pixels[0].clear();
-
         Log << Info << "Texture " << textureFileName << " loaded correctly." << endl;
     }
 
-    Texture::Texture(const vector<string> &texturesFileNames, shared_ptr<Shader> &shader) : width{ 0 }, height{ 0 }, data{ nullptr }, shader{ shader }
+    Texture::Texture(const vector<string> &texturesFileNames, shared_ptr<Shader> &shader) : width{ 0 }, height{ 0 }, data{ nullptr }, shader( shader )
     {
         Log << Function << endl;
 
@@ -45,7 +42,7 @@ namespace RenderingEngine
 
         // In a cube map at least 6 images are needed to create it
         pixels.resize(NumCubeFaces);
-        for (int index = 0; index < NumCubeFaces; ++index)
+        for (size_t index = 0; index < NumCubeFaces; ++index)
         {
             // Load the input image
             data = stbi_load(texturesFileNames[index].c_str(), reinterpret_cast<int*>(&width), reinterpret_cast<int*>(&height), &numComponents, 3);

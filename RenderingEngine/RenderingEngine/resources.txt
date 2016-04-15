@@ -51,6 +51,17 @@ O betty.obj
 T betty.tga
 - Betty End
 
+. Plane Start
+A Position 3 0
+A TexCoordIn 2 1
+U Texture
+P Projection
+M Modelview
+S vertex.glsl fragment.glsl
+C 0.0 -50.0 0.0 10.0 10.0 10.0 0.0 0.0 0.0 0.0
+H terrain.tga plane.obj
+- Plane End
+
 . Skybox Start
 A Position 3 0
 U Texture

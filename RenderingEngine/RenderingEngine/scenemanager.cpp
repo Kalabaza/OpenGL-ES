@@ -12,7 +12,7 @@ namespace RenderingEngine
             45.0f,      // Field of view, is the amount of zoom. A wide angle is 90 and a narrow angle is 30
             aspect,     // Depends on the size of the window
             0.1f,       // Near clipping plane
-            100.0f      // Far clipping plane
+            500.0f      // Far clipping plane
         );
 
         // Read the resources.txt file to obtain the valid configuration for the engine
@@ -109,6 +109,13 @@ namespace RenderingEngine
                 sceneobjects.back()->SetMesh(make_unique<Mesh>(string(""), sceneobjects.back()->GetShader()));
                 sceneobjects.back()->SetTexture(make_unique<Texture>(cubeTextures, sceneobjects.back()->GetShader()));
                 break;
+            // Terrain Heightmap
+            case 'H':
+                Log << Debug << "Loading the terrain." << endl;
+                ssLine >> texture >> object;
+                sceneobjects.back()->SetTexture(make_unique<Texture>(texture, sceneobjects.back()->GetShader()));
+                sceneobjects.back()->SetMesh(make_unique<Mesh>(object, sceneobjects.back()->GetShader(), &sceneobjects.back()->GetTexture()));
+                break;
             default:
                 continue;
             }
@@ -143,7 +150,7 @@ namespace RenderingEngine
         angle = 0.0f;
     }
 
-    SceneManager::~SceneManager()
+    void SceneManager::Clean()
     {
         Log << Function << endl;
         // Clean all the screen objects, all the destructors will be called

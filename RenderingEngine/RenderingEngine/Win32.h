@@ -7,11 +7,14 @@
 namespace RenderingEngine
 {
     // Creating of a window in Win32
-    int WinCreate(ESContext *esContext, const char *title);
+    int WinCreate(ESContext*, const char*);
+
+    // Destroying a window in Win32
+    int WinDestroy(ESContext*);
 
     // Handle the messages sent to the application
-    LRESULT WINAPI ESWinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    LRESULT WINAPI ESWinProc(HWND, UINT, WPARAM, LPARAM);
 
     // Main loop of the application
-    void WinLoop(ESContext *esContext);
+    void WinLoop(ESContext*);
 }

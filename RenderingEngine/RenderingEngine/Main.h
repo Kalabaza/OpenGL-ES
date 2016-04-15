@@ -29,4 +29,7 @@ namespace RenderingEngine
 
     // Method handle keyboard pressed keys
     void Key(ESContext *esContext, unsigned char, int, int);
+
+    // Cleanup method
+    void ShutDown(ESContext*);
 }

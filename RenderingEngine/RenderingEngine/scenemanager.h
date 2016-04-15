@@ -62,7 +62,10 @@ namespace RenderingEngine
 
     public:
         SceneManager(ESContext*);
-        ~SceneManager();
+        ~SceneManager() = default;
+        
+        // Cleanup method
+        void Clean();
 
         // Draw objects on screen
         void Draw();

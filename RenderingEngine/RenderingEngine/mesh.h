@@ -11,6 +11,7 @@
 #include "logger.h"
 #include "object.h"
 #include "shader.h"
+#include "texture.h"
 
 namespace RenderingEngine
 {
@@ -37,20 +38,21 @@ namespace RenderingEngine
         // Disable the default constructor
         Mesh() = delete;
         // Overloaded constructor that receives a shader object since its needed to set the attributes
-        Mesh(const string&, shared_ptr<Shader>&);
-        // Destructor to release resources used by the mesh
-        ~Mesh();
+        // also it can receive the texture to calculate the heightmap for the plane
+        Mesh(const string&, shared_ptr<Shader>&, unique_ptr<Texture>* = nullptr);
         // Deep copy constructor
         Mesh(const Mesh &original) : vertexBuffer{ original.vertexBuffer }, indexBuffer{ original.indexBuffer }, shader{ original.shader }
         {
             obj = make_unique<Object>(*original.obj);
         }
+        // Destructor to release resources used by the mesh
+        ~Mesh();
 
         // Method to Draw the object on screen
         void Draw();
         // Use the shader program to display the object
-        void useProgram() { shader->useProgram(); }
+        void UseProgram() { shader->useProgram(); }
         // Get the programaID of this specific object
-        GLuint getProgramObject() { return shader->getProgramObject(); }
+        GLuint GetProgramObject() { return shader->getProgramObject(); }
     };
 }

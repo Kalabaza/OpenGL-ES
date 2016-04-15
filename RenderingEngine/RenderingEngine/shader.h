@@ -34,7 +34,6 @@ namespace RenderingEngine
         // Disable the default constructor
         Shader() = delete;
         Shader(const string &, const string&, const vector<unique_ptr<Variable>>&, const vector<unique_ptr<Variable>>&);
-        ~Shader();
         // Deep copy constructor
         Shader(const Shader &original)
         {
@@ -47,6 +46,8 @@ namespace RenderingEngine
             for (auto &uni : original.uniforms)
                 uniforms.push_back(make_unique<Variable>(*uni));
         }
+        ~Shader();
+
         // Get the programID overloading the () operator
         operator GLint() { return programObject; }
 

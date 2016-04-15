@@ -1,5 +1,9 @@
 #include "openGLES.h"
+#if defined(_WIN32)
 #include "win32.h"
+#elif defined(__linux__)
+#include <cstring>
+#endif
 
 namespace RenderingEngine
 {
@@ -43,15 +47,17 @@ namespace RenderingEngine
         esContext->width = width;
         esContext->height = height;
 
+#if defined(_WIN32)
         // Create a Win32 window for the rendering area
         if (WinCreate(esContext, title) == FALSE)
         {
             Log << Error << "Creation of the Win32 window failed." << endl;
             return EGL_FALSE;
         }
+#endif
 
         // Create the EGL context and attach the rendering area to the on screen window
-        if (CreateEGLContext(esContext->hWnd, &esContext->eglDisplay, &esContext->eglContext, &esContext->eglSurface, attribList) == EGL_FALSE)
+        if (CreateEGLContext(esContext, attribList) == EGL_FALSE)
         {
             Log << Error << "Error on the method CreateEGLContext." << endl;
             return EGL_FALSE;
@@ -60,12 +66,54 @@ namespace RenderingEngine
         return EGL_TRUE;
     }
 
+    GLuint esDestroyWindow(ESContext *esContext)
+    {
+        eglBindAPI(EGL_OPENGL_ES_API);
+        // Disable the rendering surface and context of OpenGL ES
+        eglMakeCurrent(esContext->eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, esContext->eglContext);
+        eglMakeCurrent(esContext->eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        // Destroy the context of OpenGL ES
+        if (eglDestroyContext(esContext->eglDisplay, esContext->eglContext) == EGL_FALSE)
+        {
+            Log << Error << "Unable to destroy the context with EGL." << endl;
+            return EGL_FALSE;
+        }
+        // Destroy the rendering surface
+        if (eglDestroySurface(esContext->eglDisplay, esContext->eglSurface) == EGL_FALSE)
+        {
+            Log << Error << "Unable to destroy the surface with EGL." << endl;
+            return EGL_FALSE;
+        }
+        // Release EGL display connection
+        if (eglTerminate(esContext->eglDisplay) == EGL_FALSE)
+        {
+            Log << Error << "Unable to terminate the display connection with EGL." << endl;
+            return EGL_FALSE;
+        }
+
+#if defined(_WIN32)
+        // Destroy the Win32 window
+        if (WinDestroy(esContext) == FALSE)
+        {
+            Log << Error << "Destruction of the Win32 window failed." << endl;
+            return EGL_FALSE;
+        }
+#endif
+
+        return EGL_TRUE;
+    }
+
     // Create the display connection, rendering area and context
-    EGLBoolean CreateEGLContext(EGLNativeWindowType hWnd, EGLDisplay* eglDisplay, EGLContext* eglContext, EGLSurface* eglSurface, EGLint attribList[])
+    EGLBoolean CreateEGLContext(ESContext *esContext, EGLint attribList[])
     {
         Log << Function << endl;
         // Get the EGL display connection
-        EGLDisplay display = eglGetDisplay(GetDC(hWnd));
+#if defined(_WIN32)
+        EGLDisplay display = eglGetDisplay(GetDC(esContext->hWnd));
+#elif defined(__linux__)
+        Display *hdisplay = XOpenDisplay(NULL);
+        EGLDisplay display = eglGetDisplay(hdisplay);
+#endif
         if (display == EGL_NO_DISPLAY)
         {
             Log << Error << "Unable to open connection to local windowing system." << endl;
@@ -97,8 +145,12 @@ namespace RenderingEngine
             return EGL_FALSE;
         }
 
+#if defined(__linux__)
+        CreateX11Window(display, hdisplay, config, esContext);
+#endif
+
         // Create a on screen rendering area with EGL
-        EGLSurface surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)hWnd, nullptr);
+        EGLSurface surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)esContext->hWnd, nullptr);
         if (surface == EGL_NO_SURFACE)
         {
             Log << Error << "Unable to create a rendering surface with EGL." << endl;
@@ -123,9 +175,9 @@ namespace RenderingEngine
             return EGL_FALSE;
         }
 
-        *eglDisplay = display;
-        *eglSurface = surface;
-        *eglContext = context;
+        esContext->eglDisplay = display;
+        esContext->eglSurface = surface;
+        esContext->eglContext = context;
 
         return EGL_TRUE;
     }
@@ -153,6 +205,10 @@ namespace RenderingEngine
     // Main loop of the application
     void esMainLoop(ESContext *esContext)
     {
+#if defined(_WIN32)
         WinLoop(esContext);
+#elif defined(__linux__)
+        LinuxLoop(esContext);
+#endif
     }
 }

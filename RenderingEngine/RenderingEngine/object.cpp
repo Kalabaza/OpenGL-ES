@@ -14,9 +14,9 @@ namespace RenderingEngine
             -1.0f,  1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f, -1.0f,  // +Z
             -1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,  1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f   // -Z
         };
-        for (int index = 0; index < sizeof(skyboxVertices) / sizeof(float); index += 3)
+        for (size_t index = 0; index < sizeof(skyboxVertices) / sizeof(float); index += 3)
         {
-            indexes.push_back(index);
+            indexes.push_back((unsigned short)index);
             vertices.push_back(Vertex(vec3(skyboxVertices[index], skyboxVertices[index + 1], skyboxVertices[index + 2]),
                                       vec2(0.0f, 0.0f),             // Texture coordinates are not needed
                                       vec3(0.0f, 0.0f, 0.0f)));     // Normals just ignored for now

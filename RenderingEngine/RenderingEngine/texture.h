@@ -47,5 +47,10 @@ namespace RenderingEngine
         ~Texture();
 
         void Draw(TextureType);
+
+        GLint GetWidth() { return width; }
+        GLint GetHeight() { return height; }
+
+        unsigned char *TextureData() { return pixels[0].data(); }
     };
 }

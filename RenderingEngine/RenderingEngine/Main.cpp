@@ -51,9 +51,12 @@ namespace RenderingEngine
         {
             // Scape key pressed, exit the application
         case 27:
-            Log << Debug << "Escape key pressed, finishing application." << endl;
-            glDeleteProgram(esContext->programID);
+            Log << Debug << "Escape key pressed, sending quit message." << endl;
+#if defined(_WIN32)
+            PostQuitMessage(0);
+#elif defined(__linux__)
             exit(0);
+#endif
             break;
         case 'a':
             camera.x -= 0.5;
@@ -102,6 +105,16 @@ namespace RenderingEngine
         // Update the objects on screen based on changes on the rendering area or any user interaction
         sceneManager->Update(esContext);
     }
+
+    void ShutDown(ESContext *esContext)
+    {
+        Log << Function << endl;
+        sceneManager->Clean();
+        // Delete the program created on OpenGL
+        glDeleteProgram(esContext->programID);
+        // Destroy the window
+        esDestroyWindow(esContext);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -139,6 +152,8 @@ int main(int argc, char *argv[])
 
     // Enter on the application main loop
     esMainLoop(&esContext);
+
+    ShutDown(&esContext);
 
     return 0;
 }

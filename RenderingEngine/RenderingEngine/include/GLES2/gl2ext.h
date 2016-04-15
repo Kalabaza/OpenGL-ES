@@ -1,45 +1,16 @@
 #ifndef __gl2ext_h_
 #define __gl2ext_h_
 
-/* $Revision: 1.7 $ on $Date: 2008/09/30 13:34:46 $ */
+/* $Revision: 7173 $ on $Date:: 2009-01-09 11:18:21 -0800 #$ */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*
-** License Applicability. Except to the extent portions of this file are
-** made subject to an alternative license as permitted in the SGI Free
-** Software License B, Version 1.0 (the "License"), the contents of this
-** file are subject only to the provisions of the License. You may not use
-** this file except in compliance with the License. You may obtain a copy
-** of the License at Silicon Graphics, Inc., attn: Legal Services, 1600
-** Amphitheatre Parkway, Mountain View, CA 94043-1351, or at:
-**
-** http://oss.sgi.com/projects/FreeB
-**
-** Note that, as provided in the License, the Software is distributed on an
-** "AS IS" basis, with ALL EXPRESS AND IMPLIED WARRANTIES AND CONDITIONS
-** DISCLAIMED, INCLUDING, WITHOUT LIMITATION, ANY IMPLIED WARRANTIES AND
-** CONDITIONS OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A
-** PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
-**
-** Original Code. The Original Code is: OpenGL Sample Implementation,
-** Version 1.2.1, released January 26, 2000, developed by Silicon Graphics,
-** Inc. The Original Code is Copyright (c) 1991-2000 Silicon Graphics, Inc.
-** Copyright in any portions created by third parties is as indicated
-** elsewhere herein. All Rights Reserved.
-**
-** Additional Notice Provisions: The application programming interfaces
-** established by SGI in conjunction with the Original Code are The
-** OpenGL(R) Graphics System: A Specification (Version 1.2.1), released
-** April 1, 1999; The OpenGL(R) Graphics System Utility Library (Version
-** 1.3), released November 4, 1998; and OpenGL(R) Graphics with the X
-** Window System(R) (Version 1.3), released October 19, 1998. This software
-** was created using the OpenGL(R) version 1.2.1 Sample Implementation
-** published by SGI, but has not been independently verified as being
-** compliant with the OpenGL(R) version 1.2.1 Specification.
-*/
+ * This document is licensed under the SGI Free Software B License Version
+ * 2.0. For details, see http://oss.sgi.com/projects/FreeB/ .
+ */
 
 #ifndef GL_APIENTRYP
 #   define GL_APIENTRYP GL_APIENTRY*
@@ -68,11 +39,6 @@ extern "C" {
 #define GL_PALETTE8_RGB5_A1_OES                                 0x8B99
 #endif
 
-/* GL_OES_EGL_image */
-#ifndef GL_OES_EGL_image
-typedef void* GLeglImageOES;
-#endif
-
 /* GL_OES_depth24 */
 #ifndef GL_OES_depth24
 #define GL_DEPTH_COMPONENT24_OES                                0x81A6
@@ -86,6 +52,11 @@ typedef void* GLeglImageOES;
 /* GL_OES_depth_texture */
 /* No new tokens introduced by this extension. */
 
+/* GL_OES_EGL_image */
+#ifndef GL_OES_EGL_image
+typedef void* GLeglImageOES;
+#endif
+
 /* GL_OES_get_program_binary */
 #ifndef GL_OES_get_program_binary
 #define GL_PROGRAM_BINARY_LENGTH_OES                            0x8741
@@ -95,7 +66,6 @@ typedef void* GLeglImageOES;
 
 /* GL_OES_mapbuffer */
 #ifndef GL_OES_mapbuffer
-/* GL_READ_ONLY and GL_READ_WRITE not supported */
 #define GL_WRITE_ONLY_OES                                       0x88B9
 #define GL_BUFFER_ACCESS_OES                                    0x88BB
 #define GL_BUFFER_MAPPED_OES                                    0x88BC
