@@ -197,9 +197,9 @@ namespace RenderingEngine
     }
 
     // Register the update function in OpenGL ES
-    void esRegisterUpdateFunc(ESContext *esContext, void(*updateFunc)(ESContext*, float))
+    void esRegisterUpdateFunc(ESContext *esContext, void(*updateFunc)())
     {
-        esContext->updateFunc = reinterpret_cast<void(__cdecl *)(void *, float)>(updateFunc);
+        esContext->updateFunc = reinterpret_cast<void(__cdecl *)()>(updateFunc);
     }
 
     // Main loop of the application

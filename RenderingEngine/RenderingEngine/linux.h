@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 // X11
-#include <X11/Xlib.h>
+#include <X11/Xlib.h>x
 #include <X11/Xutil.h>
 
 // OpenGL

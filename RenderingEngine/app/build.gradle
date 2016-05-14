@@ -1,0 +1,71 @@
+apply plugin: 'com.android.model.application'
+// apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'org.bitbucket.pvoid.android-apt'
+
+model {
+    android {
+        compileSdkVersion 23
+        buildToolsVersion "23.0.3"
+
+        defaultConfig {
+            applicationId "mx.iteso.msc.rodriguez.roberto.renderingengine"
+            minSdkVersion.apiLevel 18
+            targetSdkVersion.apiLevel 23
+            versionCode 1
+            versionName "1.0"
+        }
+
+        ndk {
+            moduleName "RenderingEngine"
+            // Use STL features
+            stl "gnustl_static"
+            // Add the additional includes
+            cppFlags.add("-I" + file("../RenderingEngine/include"))
+            // Enable the compilation with C++11 features
+            cppFlags.add("-std=c++11")
+            // Threat warnings as errors
+            cppFlags.add("-Werror");
+            // Enable logging
+            ldLibs.add("log")
+            // Compile with opengles 2.0
+            ldLibs.add("GLESv2")
+            // Add android features
+            ldLibs.add("android")
+        }
+
+        sources {
+            main {
+                jni.source {
+                    // Location of the source code
+                    srcDirs = ["../RenderingEngine"]
+                    // Exclude from the compilation the files related to linux, windows and opengles for
+                    // those platforms since on Android opengles is natively supported
+                    exclude "**/linux*"
+                    exclude "**/win32*"
+                    exclude "**/openGLES*"
+                    // Also don't compile the main method since the entry point on Android is by the
+                    // main activity
+                    exclude "**/main.cpp"
+                }
+            }
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles.add(file('proguard-rules.txt'))
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.jakewharton:butterknife:8.0.1'
+    compile files('libs/json_simple-1.1.jar')
+    compile files('libs/dropbox-android-sdk-1.6.3.jar')
+    apt 'com.jakewharton:butterknife-compiler:8.0.1'
+}

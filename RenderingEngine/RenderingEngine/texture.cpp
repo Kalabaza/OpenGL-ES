@@ -6,19 +6,40 @@
 
 namespace RenderingEngine
 {
+#if defined(__ANDROID__)
+    Texture::Texture(AAssetManager **mgr, const string &textureFileName, shared_ptr<Shader> &shader) : width{ 0 }, height{ 0 }, data{ nullptr }, shader( shader )
+#else
     Texture::Texture(const string &textureFileName, shared_ptr<Shader> &shader) : width{ 0 }, height{ 0 }, data{ nullptr }, shader( shader )
+#endif
     {
         Log << Function << endl;
 
         GenTextureObject(SingleTexture);
 
         // Load the input image
+#if defined(__ANDROID__)
+        AAsset* pFile = AAssetManager_open(*mgr, textureFileName.c_str(), AASSET_MODE_UNKNOWN);
+        if (pFile)
+        {
+            // Get the file size
+            size_t fileSize = AAsset_getLength(pFile);
+            // Read data from the file
+            unsigned char* pData = (unsigned char*)calloc(fileSize + 1, sizeof(unsigned char));
+            AAsset_read(pFile, pData, fileSize);
+            // fix the string to be zero-terminated
+            pData[fileSize] = 0;
+            data = stbi_load_from_memory(pData, fileSize, reinterpret_cast<int*>(&width), reinterpret_cast<int*>(&height), &numComponents, 3);
+            AAsset_close(pFile);
+            free(pData);
+        }
+#else
         data = stbi_load(textureFileName.c_str(), reinterpret_cast<int*>(&width), reinterpret_cast<int*>(&height), &numComponents, 3);
+#endif
 
         if (data == nullptr)
         {
             Log << Error << "Texture format not supported: " << textureFileName << endl;
-            exit(1);
+            terminate();
         }
 
         // Copy the data to the vector that is used on the other textures
@@ -34,7 +55,11 @@ namespace RenderingEngine
         Log << Info << "Texture " << textureFileName << " loaded correctly." << endl;
     }
 
+#if defined(__ANDROID__)
+    Texture::Texture(AAssetManager **mgr, const vector<string> &texturesFileNames, shared_ptr<Shader> &shader) : width{ 0 }, height{ 0 }, data{ nullptr }, shader( shader )
+#else
     Texture::Texture(const vector<string> &texturesFileNames, shared_ptr<Shader> &shader) : width{ 0 }, height{ 0 }, data{ nullptr }, shader( shader )
+#endif
     {
         Log << Function << endl;
 
@@ -45,12 +70,29 @@ namespace RenderingEngine
         for (size_t index = 0; index < NumCubeFaces; ++index)
         {
             // Load the input image
+#if defined(__ANDROID__)
+            AAsset* pFile = AAssetManager_open(*mgr, texturesFileNames[index].c_str(), AASSET_MODE_UNKNOWN);
+            if (pFile)
+            {
+                // Get the file size
+                size_t fileSize = AAsset_getLength(pFile);
+                // Read data from the file
+                unsigned char* pData = (unsigned char*)calloc(fileSize + 1, sizeof(unsigned char));
+                AAsset_read(pFile, pData, fileSize);
+                // fix the string to be zero-terminated
+                pData[fileSize] = 0;
+                data = stbi_load_from_memory(pData, fileSize, reinterpret_cast<int*>(&width), reinterpret_cast<int*>(&height), &numComponents, 3);
+                AAsset_close(pFile);
+                free(pData);
+            }
+#else
             data = stbi_load(texturesFileNames[index].c_str(), reinterpret_cast<int*>(&width), reinterpret_cast<int*>(&height), &numComponents, 3);
+#endif
 
             if (data == nullptr)
             {
                 Log << Error << "Texture format not supported: " << texturesFileNames[index] << endl;
-                exit(1);
+                terminate();
             }
 
             // Copy the data to the vector that is used on the other textures

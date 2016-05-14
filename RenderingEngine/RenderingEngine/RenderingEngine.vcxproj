@@ -178,6 +178,7 @@ If errorlevel 1 @exit 0</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="interaction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="object.cpp" />
@@ -192,7 +193,7 @@ If errorlevel 1 @exit 0</Command>
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="logger.h" />
-    <ClInclude Include="main.h" />
+    <ClInclude Include="interaction.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="openGLES.h" />

@@ -64,7 +64,7 @@ typedef HDC NativeDisplayType;
 typedef HBITMAP NativePixmapType;
 typedef HWND NativeWindowType;
 
-#elif defined(__WINSCW__) || defined(__SYMBIAN32__)  /* Symbian */
+#elif defined(__WINSCW__) || defined(__SYMBIAN32__) || defined(__ANDROID__)
 
 typedef int NativeDisplayType;
 typedef void *NativeWindowType;

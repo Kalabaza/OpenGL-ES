@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RenderingEngine</string>
+    <string name="drawer_open">Open Navigation drawer</string>
+    <string name="drawer_close">Close Navigation drawer</string>
+    <string name="nav_local">Local resources</string>
+    <string name="nav_dropbox">Dropbox resources</string>
+    <string name="fragment_text">Select the location of the resources on the drawer.</string>
+</resources>

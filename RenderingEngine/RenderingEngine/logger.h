@@ -7,13 +7,17 @@
 #include <memory>
 #endif
 
+#if defined(__ANDROID__)
+#include <android/log.h>
+#endif
+
 #if defined(_WIN32)
 // Windows
 #include <windows.h>
 #endif
 
 #if defined(__linux__)
-// Implementation of the unique_ptr for linux
+// Implementation of the make_unique for the unique_ptr for linux/android
 namespace std
 {
     template<typename T, typename... Args>
@@ -111,25 +115,39 @@ namespace RenderingEngine
             case Error: setTextColor(0x04); break;
             }
 #endif
+#ifndef __ANDROID__
             _out_stream << prefix[logType];
+#endif
             return *this;
         }
         // Overload needed to use endl to add a new line
         Logger &operator<<(ostream& (*)(ostream&))
         {
             if (showLog())
+#ifdef __ANDROID__
+                __android_log_print(ANDROID_LOG_VERBOSE, prefix[logType].c_str(), "\n");
+#else
                 _out_stream << endl;
+#endif
 #if defined(_WIN32)
             setTextColor(0x07);
 #endif
             return *this;
         }
         // Overload with templates to allow content of any type
+#if defined (__ANDROID__)
+        Logger &operator<<(const string &data)
+#else
         template<typename T>
         Logger &operator<<(const T &data)
+#endif
         {
             if (showLog())
+#ifdef __ANDROID__
+                __android_log_print(ANDROID_LOG_VERBOSE, prefix[logType].c_str(), data.c_str());
+#else
                 _out_stream << data;
+#endif
             return *this;
         }
     };

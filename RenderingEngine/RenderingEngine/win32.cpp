@@ -118,14 +118,10 @@ namespace RenderingEngine
     {
         MSG msg = { 0 };
         int done = 0;
-        DWORD lastTime = GetTickCount();
 
         while (!done)
         {
             int gotMsg = PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE);
-            DWORD curTime = GetTickCount();
-            float deltaTime = (float)(curTime - lastTime) / 1000.0f;
-            lastTime = curTime;
 
             if (gotMsg != FALSE)
             {
@@ -147,7 +143,7 @@ namespace RenderingEngine
 
             // Call update function if registered
             if (esContext->updateFunc != nullptr)
-                esContext->updateFunc(esContext, deltaTime);
+                esContext->updateFunc();
         }
     }
 }

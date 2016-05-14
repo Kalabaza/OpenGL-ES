@@ -2,7 +2,11 @@
 
 namespace RenderingEngine
 {
+#if defined(__ANDROID__)
+    Mesh::Mesh(AAssetManager **mgr, const string &objectFileName, shared_ptr<Shader> &shader, unique_ptr<Texture> *texture /*= nullptr*/) : shader{ shader }
+#else
     Mesh::Mesh(const string &objectFileName, shared_ptr<Shader> &shader, unique_ptr<Texture> *texture /*= nullptr*/) : shader{ shader }
+#endif
     {
         Log << Function << endl;
 
@@ -11,9 +15,13 @@ namespace RenderingEngine
             obj = make_unique<Object>();
         else
             // Create the object and try to load the file
+#if defined(__ANDROID__)
+            obj = make_unique<Object>(mgr, objectFileName);
+#else
             obj = make_unique<Object>(objectFileName);
+#endif
         
-        Log << Debug << "Object file \"" << objectFileName << "\" loaded to memory." << endl;
+        Log << Debug << "Object file \"" << (objectFileName.empty() ? "skybox" : objectFileName) << "\" loaded to memory." << endl;
 
         // If the texture was received, then the hightmap will be calculated using the image values
         if (texture != nullptr)

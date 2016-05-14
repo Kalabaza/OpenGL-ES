@@ -2,9 +2,15 @@
 
 #include <vector>
 #include <memory>
+#include <exception>
+#include <sstream>
 
 // OpenGL
 #include <GLES2/gl2.h>
+
+#if defined(__ANDROID__)
+#include <android/asset_manager.h>
+#endif
 
 // Engine
 #include "logger.h"
@@ -18,6 +24,8 @@ namespace RenderingEngine
     using std::string;
     using std::ifstream;
     using std::ios;
+    using std::terminate;
+    using std::stringstream;
 
     // Class to hold a vertex and fragment shader
     class Shader
@@ -29,11 +37,19 @@ namespace RenderingEngine
         vector<unique_ptr<Variable>> attributes;
         vector<unique_ptr<Variable>> uniforms;
 
+#if defined(__ANDROID__)
+        AAssetManager* mMgr;
+#endif
         GLuint LoadShader(GLenum, const string &);
     public:
         // Disable the default constructor
         Shader() = delete;
+
+#if defined(__ANDROID__)
+        Shader(AAssetManager**, const string&, const string&, const vector<unique_ptr<Variable>>&, const vector<unique_ptr<Variable>>&);
+#else
         Shader(const string &, const string&, const vector<unique_ptr<Variable>>&, const vector<unique_ptr<Variable>>&);
+#endif
         // Deep copy constructor
         Shader(const Shader &original)
         {

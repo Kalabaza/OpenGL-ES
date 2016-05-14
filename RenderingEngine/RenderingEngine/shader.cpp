@@ -4,10 +4,19 @@
 namespace RenderingEngine
 {
     // Constructor of the shaders that initializes the vertex and fragment shaders
+#if defined(__ANDROID__)
+    Shader::Shader(AAssetManager **mgr, const string &vertexShaderFileName, const string &fragmentShaderFileName,
+                   const vector<unique_ptr<Variable>> &attributesNames, const vector<unique_ptr<Variable>> &uniformsNames)
+#else
     Shader::Shader(const string &vertexShaderFileName, const string &fragmentShaderFileName, 
                    const vector<unique_ptr<Variable>> &attributesNames, const vector<unique_ptr<Variable>> &uniformsNames)
+#endif
     {
         Log << Function << endl;
+
+#if defined(__ANDROID__)
+        mMgr = *mgr;
+#endif
 
         Log << Debug << "Loading vertex and fragment shaders." << endl;
         // Load the vertex and fragment shaders
@@ -16,7 +25,7 @@ namespace RenderingEngine
         if (vertexShader == GL_FALSE)
         {
             Log << Error << "There was a problem with the vertex shader creation." << endl;
-            exit(1);
+            terminate();
         }
         Log << Debug << "Vertex shader loaded correctly." << endl;
 
@@ -25,7 +34,7 @@ namespace RenderingEngine
         if (fragmentShader == GL_FALSE)
         {
             Log << Error << "There was a problem with the fragment shader creation." << endl;
-            exit(1);
+            terminate();
         }
         Log << Debug << "Fragment shader loaded correctly." << endl;
 
@@ -37,7 +46,7 @@ namespace RenderingEngine
         if (programObject == GL_FALSE)
         {
             Log << Error << "There was a problem at the program object creation." << endl;
-            exit(1);
+            terminate();
         }
 
         // Attach the shaders to the program object
@@ -68,7 +77,7 @@ namespace RenderingEngine
             }
 
             glDeleteProgram(programObject);
-            exit(1);
+            terminate();
         }
 
         // Get the location of the attributes and enable the attribute arrays
@@ -102,6 +111,24 @@ namespace RenderingEngine
         Log << Function << endl;
         string shaderCode, line = "";
         // Read the shader file from disk
+#if defined(__ANDROID__)
+        AAsset* pFile = AAssetManager_open(mMgr, shaderFileName.c_str(), AASSET_MODE_UNKNOWN);
+        if(pFile)
+        {
+            // Get the file size
+            size_t fileSize = AAsset_getLength(pFile);
+            // Read data from the file
+            char* pData = (char*)calloc(fileSize + 1, sizeof(char));
+            AAsset_read(pFile, pData, fileSize);
+            // fix the string to be zero-terminated
+            pData[fileSize] = 0;
+            // Copy the data to a stringstream
+            stringstream shaderStream(pData);
+            shaderCode = shaderStream.str();
+            AAsset_close(pFile);
+            free(pData);
+        }
+#else
         ifstream shaderStream(shaderFileName, ios::in);
         if (shaderStream.is_open())
         {
@@ -111,6 +138,7 @@ namespace RenderingEngine
             // Close the input stream
             shaderStream.close();
         }
+#endif
         else
         {
             Log << Error << "Unable to read the source code of the shader file: " << shaderFileName << endl;

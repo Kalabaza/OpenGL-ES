@@ -1,13 +1,21 @@
 #include "scenemanager.h"
+#if defined(__ANDROID__)
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+#endif
 
 namespace RenderingEngine
 {
-    SceneManager::SceneManager(ESContext *esContext)
+#if defined(__ANDROID__)
+    SceneManager::SceneManager(JNIEnv **env, jobject assetManager, GLint width, GLint height)
+#else
+    SceneManager::SceneManager(GLint width, GLint height)
+#endif
     {
         Log << Function << endl;
 
         // The projection matrix is represented by the perspective matrix given by glm, assign it to each one of the objects
-        GLfloat aspect = static_cast<GLfloat>(esContext->width) / static_cast<GLfloat>(esContext->height);
+        GLfloat aspect = static_cast<GLfloat>(width) / static_cast<GLfloat>(height);
         projectionMatrix = glm::perspective(
             45.0f,      // Field of view, is the amount of zoom. A wide angle is 90 and a narrow angle is 30
             aspect,     // Depends on the size of the window
@@ -17,12 +25,32 @@ namespace RenderingEngine
 
         // Read the resources.txt file to obtain the valid configuration for the engine
         string resourcesFileName = "resources.txt";
+#if defined(__ANDROID__)
+        AAssetManager* mgr = AAssetManager_fromJava(*env, assetManager);
+        AAsset* pFile = AAssetManager_open(mgr, resourcesFileName.c_str(), AASSET_MODE_UNKNOWN);
+        if (!pFile)
+#else
         ifstream resourcesFile(resourcesFileName, ios::in);
         if (!resourcesFile.is_open())
+#endif
         {
             Log << Error << "Unable to read the resources file: " << resourcesFileName << endl;
-            exit(1);
+            terminate();
         }
+
+#if defined(__ANDROID__)
+        // Get the file size
+        size_t fileSize = AAsset_getLength(pFile);
+        // Read data from the file
+        char* pData = (char*)calloc(fileSize + 1, sizeof(char));
+        AAsset_read(pFile, pData, fileSize);
+        // fix the string to be zero-terminated
+        pData[fileSize] = 0;
+        // Copy the data to a stringstream
+        stringstream resourcesFile(pData);
+        AAsset_close(pFile);
+        free(pData);
+#endif
 
         Log << Debug << "Parsing the resources.txt file." << endl;
         string line, name, vertex, fragment, object, texture, projection, modelview;
@@ -73,19 +101,31 @@ namespace RenderingEngine
             case 'S':
                 ssLine >> vertex >> fragment;
                 Log << Debug << "Creating the shaders." << endl;
+#if defined (__ANDROID__)
+                sceneobjects.back()->SetShader(make_shared<Shader>(&mgr, vertex, fragment, attributes, uniforms));
+#else
                 sceneobjects.back()->SetShader(make_shared<Shader>(vertex, fragment, attributes, uniforms));
+#endif
                 break;
             // Object definitions
             case 'O':
                 ssLine >> object;
                 Log << Debug << "Loading a model." << endl;
+#if defined (__ANDROID__)
+                sceneobjects.back()->SetMesh(make_unique<Mesh>(&mgr, object, sceneobjects.back()->GetShader()));
+#else
                 sceneobjects.back()->SetMesh(make_unique<Mesh>(object, sceneobjects.back()->GetShader()));
+#endif
                 break;
             // Textures
             case 'T':
                 ssLine >> texture;
                 Log << Debug << "Loading a texture." << endl;
+#if defined(__ANDROID__)
+                sceneobjects.back()->SetTexture(make_unique<Texture>(&mgr, texture, sceneobjects.back()->GetShader()));
+#else
                 sceneobjects.back()->SetTexture(make_unique<Texture>(texture, sceneobjects.back()->GetShader()));
+#endif
                 break;
             // Initial coordinates
             case 'C':
@@ -106,15 +146,25 @@ namespace RenderingEngine
                 Log << Debug << "Adding a skybox." << endl;
                 ssLine >> cubeTextures[0] >> cubeTextures[1] >> cubeTextures[2] >> cubeTextures[3] >> cubeTextures[4] >> cubeTextures[5];
                 sceneobjects.back()->SetSkymap();
+#if defined(__ANDROID__)
+                sceneobjects.back()->SetMesh(make_unique<Mesh>(&mgr, string(""), sceneobjects.back()->GetShader()));
+                sceneobjects.back()->SetTexture(make_unique<Texture>(&mgr, cubeTextures, sceneobjects.back()->GetShader()));
+#else
                 sceneobjects.back()->SetMesh(make_unique<Mesh>(string(""), sceneobjects.back()->GetShader()));
                 sceneobjects.back()->SetTexture(make_unique<Texture>(cubeTextures, sceneobjects.back()->GetShader()));
+#endif
                 break;
             // Terrain Heightmap
             case 'H':
                 Log << Debug << "Loading the terrain." << endl;
                 ssLine >> texture >> object;
+#if defined(__ANDROID__)
+                sceneobjects.back()->SetTexture(make_unique<Texture>(&mgr, texture, sceneobjects.back()->GetShader()));
+                sceneobjects.back()->SetMesh(make_unique<Mesh>(&mgr, object, sceneobjects.back()->GetShader(), &sceneobjects.back()->GetTexture()));
+#else
                 sceneobjects.back()->SetTexture(make_unique<Texture>(texture, sceneobjects.back()->GetShader()));
                 sceneobjects.back()->SetMesh(make_unique<Mesh>(object, sceneobjects.back()->GetShader(), &sceneobjects.back()->GetTexture()));
+#endif
                 break;
             default:
                 continue;
@@ -140,8 +190,10 @@ namespace RenderingEngine
                 uniforms.clear();
             }
         }
+#if !defined(__ANDROID__)
         // Close de the resources file
         resourcesFile.close();
+#endif
 
         // Set the initial position of the camera
         camera = vec3(2.5f, -1.0f, -5.0f);
@@ -189,7 +241,7 @@ namespace RenderingEngine
         }
     }
 
-    void SceneManager::Update(ESContext *esContext)
+    void SceneManager::Update()
     {
         // There was a change on state of the objects, update the modelview matrix
         for (size_t index = 0; index < sceneobjects.size(); ++index)

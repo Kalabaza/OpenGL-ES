@@ -1,0 +1,73 @@
+# 
+# Resources used on the rendering engine
+# 
+# Atributes have 3 properties: Name, Length, Buffertype
+# Name:		String to get the attribute from the shader
+# Length:	Can be 2, 3 or 4 (vec2, vec3 and vec4)
+# Buffertype:	Where the data is comming from?
+#		0 - Vertices
+#		1 - Textures
+#		2 - Normals
+# 
+# Uniforms have 1 property: Name
+# Name:		String to get the uniform from the shader
+# 
+# Projection matrix is handle in a special way on each object as well as the 
+# Modelview matrix, the uniforms use a different format.
+# 
+# The coordinates of an object are sent using three vertices and a angle
+# (group of also three float values): Position, Scale, Rotation and Angle
+# 
+# Each object has its own vertex and fragment shader and also the texture
+# that is used during rendering.
+# 
+# The texture needs to provide the file name and in the case of the skymap
+# all the faces need to be provided.
+# 
+# The object definition starts with a point and ends with a dash (. -)
+# 
+
+. Shara Start
+A Position 3 0
+A TexCoordIn 2 1
+U Texture
+P Projection
+M Modelview
+S vertex.glsl fragment.glsl
+C 0.0 0.0 0.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0
+O shara.obj
+T shara.tga
+- Shara End
+
+. Betty Start
+A Position 3 0
+A TexCoordIn 2 1
+U Texture
+P Projection
+M Modelview
+S vertex.glsl fragment.glsl
+C -5.0 0.0 0.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0
+O betty.obj
+T betty.tga
+- Betty End
+
+. Plane Start
+A Position 3 0
+A TexCoordIn 2 1
+U Texture
+P Projection
+M Modelview
+S vertex.glsl fragment.glsl
+C 0.0 -200.0 0.0 10.0 10.0 10.0 0.0 0.0 0.0 0.0
+H terrain.tga plane.obj
+- Plane End
+
+. Skybox Start
+A Position 3 0
+U Texture
+P Projection
+M Modelview
+S vertex_skybox.glsl fragment_skybox.glsl
+C 0.0 0.0 0.0 100.0 100.0 100.0 0.0 0.0 0.0 0.0
+B right.jpg left.jpg top.jpg bottom.jpg back.jpg front.jpg
+- Skybox End

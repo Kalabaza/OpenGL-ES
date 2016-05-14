@@ -50,7 +50,7 @@ namespace RenderingEngine
         // Callbacks for the Draw, Keyboard and Update methods
         void(*drawFunc)   (void*);
         void(*keyFunc)    (void*, unsigned char, int, int);
-        void(*updateFunc) (void*, float);
+        void(*updateFunc) ();
     } ESContext;
 
     // Initializes the OpenGL ES context variable, must be called before any other functions
@@ -72,7 +72,7 @@ namespace RenderingEngine
     void esRegisterKeyFunc(ESContext*, void(*keyboardFunc)(ESContext*, unsigned char, int, int));
 
     // Register the update function in OpenGL ES
-    void esRegisterUpdateFunc(ESContext*, void(*updateFunc)(ESContext*, float));
+    void esRegisterUpdateFunc(ESContext*, void(*updateFunc)());
 
     // Main loop of the application
     void esMainLoop(ESContext*);

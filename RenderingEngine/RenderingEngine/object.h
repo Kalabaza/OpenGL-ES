@@ -5,12 +5,17 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <exception>
 
 // GLM
 #include <glm/glm.hpp>
 
 // OpenGL
 #include <GLES2/gl2.h>
+
+#if defined(__ANDROID__)
+#include <android/asset_manager.h>
+#endif
 
 // Engine
 #include "logger.h"
@@ -22,6 +27,7 @@ namespace RenderingEngine
     using std::ifstream;
     using std::ios;
     using std::stringstream;
+    using std::terminate;
     using glm::vec3;
     using glm::vec2;
 
@@ -43,7 +49,11 @@ namespace RenderingEngine
         // Constructor for a skymap
         Object();
         // Constructor for a normal object
+#if defined(__ANDROID__)
+        Object(AAssetManager**, const string&);
+#else
         Object(const string&);
+#endif
 
         // Get the number of vertices on the object
         int getSize() { return vertices.size(); }

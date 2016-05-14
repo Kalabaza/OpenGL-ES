@@ -24,19 +24,42 @@ namespace RenderingEngine
     }
 
     // Constructor for a normal object (read from disk)
+#if defined(__ANDROID__)
+    Object::Object(AAssetManager **mgr, const string &objectFileName)
+#else
     Object::Object(const string &objectFileName)
+#endif
     {
         Log << Function << endl;
         // String to hold a line read from disk
         string line;
+#if defined(__ANDROID__)
+        AAsset* pFile = AAssetManager_open(*mgr, objectFileName.c_str(), AASSET_MODE_UNKNOWN);
+        if (!pFile)
+#else
         // Open the input file
         ifstream objFile(objectFileName, ios::in);
         // Check if the file was opened correctly
         if (!objFile.is_open())
+#endif
         {
             Log << Error << "Unable to read the object file: " << objectFileName << endl;
-            exit(1);
+            terminate();
         }
+
+#if defined(__ANDROID__)
+        // Get the file size
+        size_t fileSize = AAsset_getLength(pFile);
+        // Read data from the file
+        char* pData = (char*)calloc(fileSize + 1, sizeof(char));
+        AAsset_read(pFile, pData, fileSize);
+        // fix the string to be zero-terminated
+        pData[fileSize] = 0;
+        // Copy the data to a stringstream
+        stringstream objFile(pData);
+        AAsset_close(pFile);
+        free(pData);
+#endif
 
         // Temporary location for the information of the file
         vector<unsigned int> vertexIndices, uvIndices, normalIndices;
@@ -101,8 +124,10 @@ namespace RenderingEngine
             else
                 continue;
         }
+#if !defined(__ANDROID__)
         // Close the input file
         objFile.close();
+#endif
 
         // Insert each vertex of the triangles
         for (size_t index = 0; index < vertexIndices.size(); ++index)

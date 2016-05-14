@@ -33,13 +33,16 @@ namespace RenderingEngine
 
         // Pointer to the shader that will be used to display this object
         shared_ptr<Shader> shader;
-
     public:
         // Disable the default constructor
         Mesh() = delete;
         // Overloaded constructor that receives a shader object since its needed to set the attributes
         // also it can receive the texture to calculate the heightmap for the plane
+#if defined (__ANDROID__)
+        Mesh(AAssetManager**, const string&, shared_ptr<Shader>&, unique_ptr<Texture>* = nullptr);
+#else
         Mesh(const string&, shared_ptr<Shader>&, unique_ptr<Texture>* = nullptr);
+#endif
         // Deep copy constructor
         Mesh(const Mesh &original) : vertexBuffer{ original.vertexBuffer }, indexBuffer{ original.indexBuffer }, shader{ original.shader }
         {

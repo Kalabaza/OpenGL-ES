@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <tuple>
+#include <exception>
 
 // GLM
 #include <glm/glm.hpp>
@@ -23,7 +24,11 @@
 #include "texture.h"
 #include "variable.h"
 #include "sceneobject.h"
+#if defined (__ANDROID__)
+#include <jni.h>
+#else
 #include "openGLES.h"
+#endif
 
 namespace RenderingEngine
 {
@@ -38,6 +43,7 @@ namespace RenderingEngine
     using std::tuple;
     using std::make_tuple;
     using std::get;
+    using std::terminate;
     using glm::vec3;
     using glm::mat4;
     using glm::value_ptr;
@@ -61,7 +67,11 @@ namespace RenderingEngine
         float angle;
 
     public:
-        SceneManager(ESContext*);
+#if defined (__ANDROID__)
+        SceneManager(JNIEnv**, jobject, GLint, GLint);
+#else
+        SceneManager(GLint, GLint);
+#endif
         ~SceneManager() = default;
         
         // Cleanup method
@@ -70,7 +80,7 @@ namespace RenderingEngine
         // Draw objects on screen
         void Draw();
         // Update the state of the objects
-        void Update(ESContext*);
+        void Update();
 
         // Handling camera
         vec3 getCamera() { return camera; }

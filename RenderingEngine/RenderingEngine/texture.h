@@ -42,8 +42,14 @@ namespace RenderingEngine
     public:
         // Disable the default constructor
         Texture() = delete;
+
+#if defined(__ANDROID__)
+        Texture(AAssetManager**, const string&, shared_ptr<Shader>&);
+        Texture(AAssetManager**, const vector<string>&, shared_ptr<Shader>&);
+#else
         Texture(const string&, shared_ptr<Shader>&);
         Texture(const vector<string>&, shared_ptr<Shader>&);
+#endif
         ~Texture();
 
         void Draw(TextureType);
